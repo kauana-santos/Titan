@@ -1,5 +1,6 @@
 package com.titan.controller;
 
+import com.titan.exception.CpfJaCadastradoException;
 import com.titan.model.Aluno;
 import com.titan.repository.AlunoRepository;
 import jakarta.validation.Valid;
@@ -24,6 +25,10 @@ public class AlunoController {
 
     @PostMapping
     public ResponseEntity<Aluno> criarAluno(@Valid @RequestBody Aluno aluno){
+        if( repository.existsByCpf(aluno.getCpf())){
+            throw new CpfJaCadastradoException(aluno.getCpf());
+        }
+
         var salvo = repository.save(aluno);
         return ResponseEntity.status(201).body(salvo);
     }

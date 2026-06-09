@@ -2,6 +2,7 @@ package com.titan.model;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -25,13 +26,13 @@ public class Aluno {
     @Column(unique = true)
     private String cpf;
 
-    @NotBlank(message = "A data de nascimento é obrigatória")
+    @NotNull(message = "A data de nascimento é obrigatória")
     private LocalDate dtNascimento;
 
-    @NotBlank(message = "A matricula é obrigatória")
+    @NotNull(message = "A matricula é obrigatória")
     private Boolean matriculaAtiva;
 
-    @NotBlank(message = "O plano é obrigatório")
+    @NotNull(message = "O plano é obrigatório")
     @Enumerated(EnumType.STRING)
     private Plano plano;
 }
