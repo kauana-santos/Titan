@@ -2,6 +2,7 @@ package com.titan.controller;
 
 import com.titan.model.Aluno;
 import com.titan.repository.AlunoRepository;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -22,13 +23,13 @@ public class AlunoController {
     }
 
     @PostMapping
-    public ResponseEntity<Aluno> criarAluno(@RequestBody Aluno aluno){
+    public ResponseEntity<Aluno> criarAluno(@Valid @RequestBody Aluno aluno){
         var salvo = repository.save(aluno);
         return ResponseEntity.status(201).body(salvo);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Aluno> atualizar(@PathVariable Long id, @RequestBody Aluno aluno){
+    public ResponseEntity<Aluno> atualizar(@PathVariable Long id, @Valid @RequestBody Aluno aluno){
         Optional<Aluno> alunoExist = repository.findById(id);
 
         if (alunoExist.isPresent()){
@@ -61,21 +62,27 @@ public class AlunoController {
     @GetMapping("/{id}")
     public ResponseEntity<Aluno> buscar(@PathVariable Long id){
 
-        Optional<Aluno> alunodoBano = repository.findById(id);
+        Optional<Aluno> alunodoBanco = repository.findById(id);
 
-        if (!alunodoBano.isPresent()){
+        if (!alunodoBanco.isPresent()){
             return ResponseEntity.notFound().build();
         }
 
-        return ResponseEntity.ok(alunodoBano.get());
+        return ResponseEntity.ok(alunodoBanco.get());
     }
 
     @GetMapping("buscar/{id}")
     public ResponseEntity<String> matricula(@PathVariable Long id){
-        var aluno = repository.findById(id).get();
+        var alunoOptional = repository.findById(id);
 
-        if (!repository.existsById(id)){
+        if (alunoOptional.isEmpty()) {
             return ResponseEntity.noContent().build();
+        }
+
+        var aluno = alunoOptional.get();
+
+        if (aluno.getMatriculaAtiva()) {
+            return ResponseEntity.ok("Matricula Ativa");
         }
 
         return ResponseEntity.ok("Matricula Inativa");
